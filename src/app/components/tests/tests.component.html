@@ -1,1 +1,46 @@
-<p>tests works!</p>
+<div>
+    <h1 class="is-size-1">BATOSAN</h1>
+    <!-- 
+    <div class="card p-3">
+        <p>All the words in the list :</p>
+        <p>{{wordsDatabase}}</p>
+    </div>
+
+    <div class="card p-3">
+        <p>Only english words method :</p>
+        <p>{{shuffledEnglishWords}}</p>
+    </div>
+
+    <div class="card p-3">
+        <p>Only japanese words method :</p>
+        <p>{{shuffledJapaneseWords}}</p>
+    </div> -->
+    <div class="card p-3">
+        <div class="columns is-centered">
+            <div class="column is-4">
+                <ul *ngFor="let e of shuffledEnglishWords; let i = index">
+                    <li>
+                        <button 
+                            class="button is-light is-fullwidth m-2" 
+                            (click)="HandleClick(e, i)"
+                            [class]="getButtonClass(i)">
+                            {{e}}
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="column is-4">
+                <ul *ngFor="let e of shuffledJapaneseWords; let i = index">
+                    <li>
+                        <button 
+                            class="button is-light is-fullwidth m-2" 
+                            (click)="HandleClick(e, i + shuffledEnglishWords.length)"
+                            [class]="getButtonClass(i + shuffledEnglishWords.length)">
+                            {{e}}
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
