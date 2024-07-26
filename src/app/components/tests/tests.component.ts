@@ -10,10 +10,11 @@ import { Component } from '@angular/core';
 })
 export class TestsComponent {
   clicks:number = 0
-  firstClickedWord: string | null = null; // store the first clicked word
-  firstClickedIndex: number | null = null;
-  secondClickedWord: string | null = null; // store the second clicked word
-  secondClickedIndex: number | null = null;
+  firstClickedWord: string | null = null // store the first clicked word
+  firstClickedIndex: number | null = null
+  secondClickedWord: string | null = null // store the second clicked word
+  secondClickedIndex: number | null = null
+  matchCount: number = 0
   batActivated:boolean = false
   wordsDatabase:string[] = ['thank you', 'ありがとう', 
                             'damn', 'くそ', 
@@ -21,8 +22,8 @@ export class TestsComponent {
                             'my name is', '私は',
                             'i see', 'そうか'
 ];
-  shuffledEnglishWords:string[]= [];
-  shuffledJapaneseWords:string[] = [];
+  shuffledEnglishWords:string[]= []
+  shuffledJapaneseWords:string[] = []
 
   constructor() {
     this.shuffleWords()
@@ -66,20 +67,20 @@ export class TestsComponent {
 
   // Altered method to match check a pair of words in any order
   TranslatesTo(word1: string, word2: string): boolean {
-    const index1 = this.wordsDatabase.indexOf(word1);
-    const index2 = this.wordsDatabase.indexOf(word2);
+    const index1 = this.wordsDatabase.indexOf(word1)
+    const index2 = this.wordsDatabase.indexOf(word2)
     
     if (index1 === -1 || index2 === -1) {
-      console.log(`${word1}/${word2}: no such word in database`);
-      return false;
+      console.log(`${word1}/${word2}: no such word in database`)
+      return false
     }
     
     // Check if word1 and word2 are correctly paired
     if (Math.abs(index1 - index2) === 1 // check if adjacent elems
     && Math.min(index1, index2) % 2 === 0) { // check if lower elem is even (= eng word)
-      return true;
+      return true
     } else {
-      return false;
+      return false
     }
   }
 
@@ -96,29 +97,49 @@ export class TestsComponent {
       this.secondClickedIndex = index
       if (this.firstClickedWord) { // true if not null
         if (this.TranslatesTo(this.firstClickedWord, word)) {  // Check if pairs match
-          console.log(`Match found: ${this.firstClickedWord} translates to ${this.secondClickedWord}`);
+          this.matchCount += 1
+          if (this.matchCount == 5) { 
+            // 'Winning' alert after 5 successful words match 
+            // BUT also works if same set of 2 words are matched 5 times in a row. 
+            // TODO : ensure that the matched words are 5 strictly different sets of 2.
+            window.alert('Félicitations pauvre con!')
+          } else {
+            console.log(`Match found: ${this.firstClickedWord} translates to ${this.secondClickedWord}`);
+          }
         } else {
           console.log(`No match: ${this.firstClickedWord} does not translate to ${this.secondClickedWord}`);
+          window.alert('No match. Try to gobble deez nuts and try again, you colossal twat.')
         }
       }
       // no reset here because there would not be enough time to stylize clicked buttons
     }
   }
 
-// Display method to reset a board of 10 words in a shuffled manner
+  // FOR TEST PURPOSE ONLY : matchCount reset function
+
+  resetPage() {
+    this.matchCount = 0
+    this.shuffleWords()
+    this.firstClickedWord = null
+    this.firstClickedIndex = null
+    this.secondClickedWord = null
+    this.secondClickedIndex = null
+  }
+
+  // Display method to reset a board of 10 words in a shuffled manner
 
   shuffleArray(array: string[]): string[] {
     let shuffledArray = array.slice(); // Create a copy of the array
     for (let i = shuffledArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]]
     }
-    return shuffledArray;
+    return shuffledArray
   }
 
   shuffleWords() {
-    this.shuffledEnglishWords = this.shuffleArray(this.GetEnglishWords(this.wordsDatabase));
-    this.shuffledJapaneseWords = this.shuffleArray(this.GetJapaneseWords(this.wordsDatabase));
+    this.shuffledEnglishWords = this.shuffleArray(this.GetEnglishWords(this.wordsDatabase))
+    this.shuffledJapaneseWords = this.shuffleArray(this.GetJapaneseWords(this.wordsDatabase))
   }
 
 
@@ -129,9 +150,8 @@ export class TestsComponent {
       if (this.firstClickedIndex !== null && this.secondClickedIndex !== null) {
         return this.TranslatesTo(this.firstClickedWord!, this.secondClickedWord!) ? 'has-background-success' : 'has-background-danger';
       }
-      return 'has-background-info';
+      return 'has-background-info'
     }
-    return '';
+    return ''
   }
-
 }
