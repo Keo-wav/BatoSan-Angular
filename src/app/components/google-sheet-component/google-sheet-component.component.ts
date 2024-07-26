@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-declare var gapi: any
+declare var gapi: any;
 
 @Component({
   selector: 'app-google-sheet-component',
@@ -18,8 +18,6 @@ export class GoogleSheetComponentComponent implements OnInit {
   // Use either API Key or Client ID and secret for OAuth
   private API_KEY = 'AIzaSyC0KAQ2Fm1wtggMkXCvelMYZ76JRX8F4BA';
   // private CLIENT_ID = 'YOUR_CLIENT_ID';
-  
-  data: any[] = [];
 
   constructor() { }
 
@@ -68,5 +66,6 @@ export class GoogleSheetComponentComponent implements OnInit {
         this.wordsDatabase.push(values[i][1]);
       }
     }
+  console.log(this.wordsDatabase)
   }
 }
