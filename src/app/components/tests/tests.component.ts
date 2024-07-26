@@ -28,6 +28,7 @@ export class TestsComponent {
   constructor() {
     this.shuffleWords()
   }
+  
   GetEnglishWords(wordsTab:string[]):string[] {
     let tab:string[] = []
     for (let i = 0; i < wordsTab.length ; i++) {
