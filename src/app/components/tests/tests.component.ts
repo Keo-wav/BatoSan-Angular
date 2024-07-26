@@ -108,7 +108,7 @@ export class TestsComponent {
           }
         } else {
           console.log(`No match: ${this.firstClickedWord} does not translate to ${this.secondClickedWord}`);
-          window.alert('No match. Try to gobble deez nuts and try again, you colossal twat.')
+          window.alert('No match, you colossal twat.')
         }
       }
       // no reset here because there would not be enough time to stylize clicked buttons
@@ -117,7 +117,7 @@ export class TestsComponent {
 
   // FOR TEST PURPOSE ONLY : matchCount reset function
 
-  resetPage() {
+  resetPage() { // or you know, you could just ... reload the page smh
     this.matchCount = 0
     this.shuffleWords()
     this.firstClickedWord = null
