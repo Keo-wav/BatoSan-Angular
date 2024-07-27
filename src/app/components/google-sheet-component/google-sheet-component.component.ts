@@ -1,22 +1,25 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { NgFor, NgIf } from '@angular/common';
 
 declare var gapi: any;
 
 @Component({
   selector: 'app-google-sheet-component',
   standalone: true,
-  imports: [],
+  imports: [NgFor, NgIf],
   templateUrl: './google-sheet-component.component.html',
   styleUrl: './google-sheet-component.component.css'
 })
 export class GoogleSheetComponentComponent implements OnInit {
+  private apiKey: string = environment.googleApiKey;
   wordsDatabase: string[] = [];
   // Replace with your sheet's ID and range
   private SHEET_ID = '1N1QYo-YB2xawavxNuXFQxDZBgwTEjc_BR8yGvvQSj5s';
   private RANGE = 'Sheet1!A:F';
 
   // Use either API Key or Client ID and secret for OAuth
-  private API_KEY = 'AIzaSyC0KAQ2Fm1wtggMkXCvelMYZ76JRX8F4BA';
+  private API_KEY = this.apiKey;
   // private CLIENT_ID = 'YOUR_CLIENT_ID';
 
   constructor() { }
