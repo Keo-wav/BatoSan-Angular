@@ -1,6 +1,8 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
+declare var gapi: any;
+
 @Component({
   selector: 'app-tests',
   standalone: true,
@@ -14,19 +16,70 @@ export class TestsComponent {
   firstClickedIndex: number | null = null
   secondClickedWord: string | null = null // store the second clicked word
   secondClickedIndex: number | null = null
+
   matchCount: number = 0
-  batActivated:boolean = false
-  wordsDatabase:string[] = ['thank you', 'ありがとう', 
-                            'damn', 'くそ', 
-                            'pervert', '変態', 
-                            'my name is', '私は',
-                            'i see', 'そうか'
-];
+  twat: boolean = false
+
+  wordsDatabase:string[] = []
+  setOfTenWords:string[] = []
   shuffledEnglishWords:string[]= []
   shuffledJapaneseWords:string[] = []
 
+  private API_KEY = 'AIzaSyBN4I-DWOMYHNQd6UDTfqd3i6YhjOCsfAg'
+  private SHEET_ID = '1N1QYo-YB2xawavxNuXFQxDZBgwTEjc_BR8yGvvQSj5s';
+  private RANGE = "'Dico'!A2:B";
+
   constructor() {
     this.shuffleWords()
+  }
+  
+  ngOnInit() {
+    this.loadGapiClient()
+    this.shuffleWords()
+  }
+
+  loadGapiClient() {
+    gapi.load('client', () => {
+      gapi.client.init({
+        apiKey: this.API_KEY,
+        discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
+      }).then(() => {
+        this.fetchData();
+      }, (error: any) => {
+        console.error("Error loading GAPI client for API", error);
+      });
+    });
+  }
+
+  fetchData() {
+    gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: this.SHEET_ID,
+      range: this.RANGE,
+    }).then((response: any) => {
+      // console.log('Response:', response);
+      const values = response.result.values;
+      this.processData(values);
+      this.shuffleWords()
+    }, (response: any) => {
+      console.error('Error fetching data:', response.result.error);
+    });
+  }
+
+  processData(values: string[][]) {
+    this.wordsDatabase = [];
+    for (let i = 0; i < values.length; i++) {
+      if (values[i][0] && values[i][1]) {
+        this.wordsDatabase.push(values[i][0], values[i][1]); // Add Japanese and English words as pairs
+      }
+    }
+  
+    this.shuffleWords(); 
+  }
+
+  only10Words(tab: string[]) {
+    // take a random number that has to be even (english)
+    let rand = 2 * Math.floor(Math.random() * (this.wordsDatabase.length / 2 + 1));
+    tab.slice(rand, (rand + 10))
   }
   
   GetEnglishWords(wordsTab:string[]):string[] {
@@ -47,24 +100,17 @@ export class TestsComponent {
     }
     return tab
   }
-  SeparateWords(wordsTab:string[]):string[][] {
-    let tab:string[][] = [[], []]
-    for (let i = 0; i < wordsTab.length ; i++) {
-      if (i % 2 === 0) {
-        tab[0].push(wordsTab[i])
-      } else if (i % 2 !== 0) {
-        tab[1].push(wordsTab[i])
-      }
-    }
-    return tab
-  }
-  DisplayBatoSanTests() {
-    if (this.batActivated === false) {
-      this.batActivated = true
-    } else {
-      this.batActivated = false
-    }
-  }
+  // SeparateWords(wordsTab:string[]):string[][] {
+  //   let tab:string[][] = [[], []]
+  //   for (let i = 0; i < wordsTab.length ; i++) {
+  //     if (i % 2 === 0) {
+  //       tab[0].push(wordsTab[i])
+  //     } else if (i % 2 !== 0) {
+  //       tab[1].push(wordsTab[i])
+  //     }
+  //   }
+  //   return tab
+  // }
 
   // Altered method to match check a pair of words in any order
   TranslatesTo(word1: string, word2: string): boolean {
@@ -109,7 +155,7 @@ export class TestsComponent {
           }
         } else {
           console.log(`No match: ${this.firstClickedWord} does not translate to ${this.secondClickedWord}`);
-          window.alert('No match, you colossal twat.')
+          this.twat = true
         }
       }
       // no reset here because there would not be enough time to stylize clicked buttons
@@ -127,7 +173,7 @@ export class TestsComponent {
     this.secondClickedIndex = null
   }
 
-  // Display method to reset a board of 10 words in a shuffled manner
+  // Display method to shuffle words
 
   shuffleArray(array: string[]): string[] {
     let shuffledArray = array.slice(); // Create a copy of the array
@@ -139,8 +185,17 @@ export class TestsComponent {
   }
 
   shuffleWords() {
-    this.shuffledEnglishWords = this.shuffleArray(this.GetEnglishWords(this.wordsDatabase))
-    this.shuffledJapaneseWords = this.shuffleArray(this.GetJapaneseWords(this.wordsDatabase))
+    // Separate words into English and Japanese
+    const englishWords = this.GetEnglishWords(this.wordsDatabase);
+    const japaneseWords = this.GetJapaneseWords(this.wordsDatabase);
+  
+    // Shuffle both arrays
+    this.shuffledEnglishWords = this.shuffleArray(englishWords);
+    this.shuffledJapaneseWords = this.shuffleArray(japaneseWords);
+  
+    // Adjust arrays to match in the template
+    while (this.shuffledEnglishWords.length > 5) this.shuffledEnglishWords.pop();
+    while (this.shuffledJapaneseWords.length > 5) this.shuffledJapaneseWords.pop();
   }
 
 

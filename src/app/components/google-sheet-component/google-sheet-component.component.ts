@@ -67,6 +67,6 @@ export class GoogleSheetComponentComponent implements OnInit {
         this.wordsDatabase.push(values[i][1]);
       }
     }
-  // console.log(this.wordsDatabase)
+  console.log(this.wordsDatabase)
   }
 }

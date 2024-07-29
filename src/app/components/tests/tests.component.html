@@ -20,7 +20,7 @@
         <div class="columns is-centered">
             <div class="column is-4">
                 <ul *ngFor="let e of shuffledEnglishWords; let i = index">
-                    <li>
+                    <li *ngIf="i<5">
                         <button 
                             class="button is-light is-fullwidth m-2" 
                             (click)="HandleClick(e, i)"
@@ -32,7 +32,7 @@
             </div>
             <div class="column is-4">
                 <ul *ngFor="let e of shuffledJapaneseWords; let i = index">
-                    <li>
+                    <li *ngIf="i<5">
                         <button 
                             class="button is-light is-fullwidth m-2" 
                             (click)="HandleClick(e, i + shuffledEnglishWords.length)"
