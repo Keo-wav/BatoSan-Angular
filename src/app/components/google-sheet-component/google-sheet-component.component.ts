@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { NgFor, NgIf } from '@angular/common';
 
 declare var gapi: any;
@@ -12,20 +11,18 @@ declare var gapi: any;
   styleUrl: './google-sheet-component.component.css'
 })
 export class GoogleSheetComponentComponent implements OnInit {
-  private apiKey: string = environment.googleApiKey;
   wordsDatabase: string[] = [];
-  // Replace with your sheet's ID and range
+  private API_KEY = 'AIzaSyBN4I-DWOMYHNQd6UDTfqd3i6YhjOCsfAg'
   private SHEET_ID = '1N1QYo-YB2xawavxNuXFQxDZBgwTEjc_BR8yGvvQSj5s';
-  private RANGE = 'Sheet1!A:F';
-
-  // Use either API Key or Client ID and secret for OAuth
-  private API_KEY = this.apiKey;
-  // private CLIENT_ID = 'YOUR_CLIENT_ID';
+  private RANGE = "'Dico'!A2:B";
 
   constructor() { }
 
   ngOnInit() {
     this.loadGapiClient();
+    if (gapi) {
+      console.log('Google API loaded')
+    }
   }
 
   loadGapiClient() {
@@ -46,12 +43,13 @@ export class GoogleSheetComponentComponent implements OnInit {
   fetchData() {
     gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: this.SHEET_ID,
-      range: this.RANGE,
+      range: this.RANGE,  // Example range
     }).then((response: any) => {
+      console.log('Response:', response);
       const values = response.result.values;
       this.processData(values);
     }, (response: any) => {
-      console.error('Error: ' + response.result.error.message);
+      console.error('Error fetching data:', response.result.error);
     });
   }
 
@@ -69,6 +67,6 @@ export class GoogleSheetComponentComponent implements OnInit {
         this.wordsDatabase.push(values[i][1]);
       }
     }
-  console.log(this.wordsDatabase)
+  // console.log(this.wordsDatabase)
   }
 }
